@@ -1,43 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>111</title>
   <style>
-    .box {
-      margin: 0px 0px 20px 0px;
-      cursor: pointer;
-      
-    }
-    .active{
-      color: rgb(241, 10, 10);
-    }
+  .wrapper {
+    display: flex;
+  }
+.hour, .min, .sec {
+  margin: 0px 40px 0px 0px;
+  font-size: 40px;
+  
+}
+  
   </style>
 </head>
+
 <body>
   <div class="wrapper">
-    <div class="box active">1</div>
-    <div class="box">2</div>
-    <div class="box">3</div>
+    <div class="hour">0</div>
+    <div class="min">0</div>
+    <div class="sec">0</div>
+    
   </div>
+   
   <script>
-const wrap = document.querySelector('.wrapper');
-const box = document.querySelectorAll('.box');
+    const hour = document.querySelector('.hour');
+    const min = document.querySelector('.min');
+    const sec = document.querySelector('.sec');
+    
 
 
+//     let i = 0;
+// function time() {
+//   setInterval(() => {
+//     now.innerHTML = i;
+//     i++;
+//     // console.log(now);
+    
+//   }, 1000); 
+ 
+// }
+// time();
+// console.log(min.innerHTML);
 
-const start = new Date(); // текущее время 
-for(let i = 0; i<100000; i++ ) {
-let some = i**3
+  
+    console.log(new Date());
+    let deadLine = '2022-04-15T00:00:00+0300'; // важно дописать +0300
+    console.log(Date.parse(deadLine));
+   
+function getTime() { 
+    let t = Date.parse(deadLine) - Date.now(); //1649874410001
+let hours = Math.floor(t / (60*60*1000) % 24); // 1.45
+let minutes = Math.floor(t / (60*1000) %60);
+let seconds = Math.floor(t / (1000) %60);
+ 
+    hour.innerHTML = hours;
+    min.innerHTML = minutes;
+    sec.innerHTML = seconds;
 }
-const end = new Date()
-console.log(`Цикл отработал за ${end - start} милисекунд`); // Разница 28 милисекунд
 
+//вызываем ф. getTime и получаем в HTML обновленные данные
+setInterval(getTime, 1000);
 
-
-
+   
+   
   </script>
 </body>
+
 </html>
