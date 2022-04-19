@@ -7,67 +7,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>111</title>
   <style>
-  .wrapper {
-    display: flex;
-  }
-.hour, .min, .sec {
-  margin: 0px 40px 0px 0px;
-  font-size: 40px;
-  
+    .wrapper {
+      display: flex;
+      justify-content: center;
+    }
+.text {
+   max-width: 200px;
+  max-height: 200px;
+  overflow: scroll;
 }
+.text::before {
+  content: '22';
+  font-size: 22px;
+ }
+
+ .text2 {
+   opacity: 0;
+   visibility: hidden;
+ }
   
   </style>
 </head>
 
 <body>
   <div class="wrapper">
-    <div class="hour">0</div>
-    <div class="min">0</div>
-    <div class="sec">0</div>
+  <div class="text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Asperiores, saepe deleniti vero nihil amet possimus earum aspernatur laborum, esse nam reiciendis magnam placeat praesentium maxime! Reiciendis exercitationem perspiciatis labore odit!</div>
     
   </div>
-   
+  <button>Кнопка</button>
+  <div class="text2"  style="line-height: 2000%;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Asperiores, saepe deleniti vero nihil amet possimus earum aspernatur laborum, esse nam reiciendis magnam placeat praesentium maxime! Reiciendis exercitationem perspiciatis labore odit!</div>
   <script>
-    const hour = document.querySelector('.hour');
-    const min = document.querySelector('.min');
-    const sec = document.querySelector('.sec');
-    
+  const text = document.querySelector('.text');
+  const btn = document.querySelector('button');
+  const text2 = document.querySelector('.text2');
+  let width = text.clientWidth;
+  let height = text.clientHeight;
 
-
-//     let i = 0;
-// function time() {
-//   setInterval(() => {
-//     now.innerHTML = i;
-//     i++;
-//     // console.log(now);
-    
-//   }, 1000); 
- 
-// }
-// time();
-// console.log(min.innerHTML);
+  // Узнаем когда внутри div прокрутится вниз до конца
+  btn.addEventListener('click', ()=> { 
+  text2.style.transition = 'all 1.3s ease';
+  text2.style.opacity = 1;
+  text2.style.visibility = 'visible';
 
   
-    console.log(new Date());
-    let deadLine = '2022-04-15T00:00:00+0300'; // важно дописать +0300
-    console.log(Date.parse(deadLine));
-   
-function getTime() { 
-    let t = Date.parse(deadLine) - Date.now(); //1649874410001
-let hours = Math.floor(t / (60*60*1000) % 24); // 1.45
-let minutes = Math.floor(t / (60*1000) %60);
-let seconds = Math.floor(t / (1000) %60);
- 
-    hour.innerHTML = hours;
-    min.innerHTML = minutes;
-    sec.innerHTML = seconds;
-}
+  });
+let style = getComputedStyle(text);
+console.log(style.fontSize); // 16px
+console.log(document.body.clientWidth); //ширина браузера окна видимой части
+console.log(document.documentElement.scrollTop); //получим данные о прокрутке вверх всего контента
 
-//вызываем ф. getTime и получаем в HTML обновленные данные
-setInterval(getTime, 1000);
+// Размеры элемента div контента внутри окна или родителя
+  console.log(text.clientWidth); // 183 размер div
+  console.log(text.clientHeight); // 183
+  console.log(text.offsetWidth); // 200 с полосой прокрутки
+  console.log(text.offsetHeight); // 200 с полосой прокрутки
+  console.log(text.scrollHeight); // 242 весь контент с прокруткой, который спрятан ниже / выше
+  console.log(text.scrollTop); // 59 на сколько вверх ушел контент 
 
-   
-   
+  // Размеры самого окна браузера
+  console.log(window.outerWidth); // 761 именно самого окна браузера ширина
+  console.log(window.innerWidth); // 745 без полосы прокрутки
+  console.log(window.outerHeight); /// 1056 именно самого окна браузера высота
+console.log(window.pageYOffset); // прокрутка вверх всего window
+
   </script>
 </body>
 
