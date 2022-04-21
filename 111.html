@@ -31,7 +31,7 @@
 
 <body>
   <div class="wrapper">
-  <div class="text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Asperiores, saepe deleniti vero nihil amet possimus earum aspernatur laborum, esse nam reiciendis magnam placeat praesentium maxime! Reiciendis exercitationem perspiciatis labore odit!</div>
+  <div class="text">Lorem ipsum dolor </div>
     
   </div>
   <button>Кнопка</button>
@@ -42,34 +42,48 @@
   const text2 = document.querySelector('.text2');
   let width = text.clientWidth;
   let height = text.clientHeight;
+// 'use strict'
+// ф.
+// function count(num) {
+//     return this*num;
+// }
+// // здесь double  - это новая ф. с жестко привязанным контекстом
+// const double = count.bind(2); //  2 перейдет в this
 
-  // Узнаем когда внутри div прокрутится вниз до конца
-  btn.addEventListener('click', ()=> { 
-  text2.style.transition = 'all 1.3s ease';
-  text2.style.opacity = 1;
-  text2.style.visibility = 'visible';
+// console.log(double(3)); // 6
+// console.log(double(13)); // 26
 
+// // или так можно вызвать -по настоящему
+// let res = double(6); 
+// console.log(res); // 12
+
+btn.addEventListener('click', ()=> { // но если через стрелочную то this не сработает( выдаст window) - т.к. у стрел. нет контекста вызова, она берет его у родителя ( window - глоб. объект)
   
-  });
-let style = getComputedStyle(text);
-console.log(style.fontSize); // 16px
-console.log(document.body.clientWidth); //ширина браузера окна видимой части
-console.log(document.documentElement.scrollTop); //получим данные о прокрутке вверх всего контента
+ console.log(this); // <button>Кнопка</button> - то же что и event.target
+ this.style.backgroundColor = 'red';
+ // но на практике используют e.target  а не контекст вызова
+});
 
-// Размеры элемента div контента внутри окна или родителя
-  console.log(text.clientWidth); // 183 размер div
-  console.log(text.clientHeight); // 183
-  console.log(text.offsetWidth); // 200 с полосой прокрутки
-  console.log(text.offsetHeight); // 200 с полосой прокрутки
-  console.log(text.scrollHeight); // 242 весь контент с прокруткой, который спрятан ниже / выше
-  console.log(text.scrollTop); // 59 на сколько вверх ушел контент 
+let arr = [1,2,3];
+let newArr = [...arr];
+console.log(newArr);
+let obj = {
+  id: 1,
+  age: 23,
+}
 
-  // Размеры самого окна браузера
-  console.log(window.outerWidth); // 761 именно самого окна браузера ширина
-  console.log(window.innerWidth); // 745 без полосы прокрутки
-  console.log(window.outerHeight); /// 1056 именно самого окна браузера высота
-console.log(window.pageYOffset); // прокрутка вверх всего window
+let newObj  = {...obj};
+console.log(newObj);
 
+let fun = function (a,b, ...rest) {
+  console.log(a, b, rest); // 1 2 (2) [3, 4] - вернет два параметра и остальные в массиве
+}
+let res = fun(1,2,3,4)
+
+function calc(a=2, b=3) {  // Но если все аргументы есть то они перепишут параметры по умолчанию
+ console.log(a*b);
+}
+calc(2,5) // 10 а не 6
   </script>
 </body>
 
