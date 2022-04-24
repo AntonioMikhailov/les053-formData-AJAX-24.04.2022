@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отправка формы - урок Иван-053 24.04.2022 </title>
+  <style>
+    .wrapper {
+      position: relative;
+    }
+  form {
+    position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      justify-content: center;
+      gap: 20px;
+    }
+    .message-wrapper {
+      height: 50px;
+      padding: 10px 0px 0px 0px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <form action="#" class="form_class" >
+      <input placeholder="Ваше имя" type="text" name="name">
+      <input placeholder="Ваш телефон" type="text" name="tel">
+      <textarea name="message" style="height: 200px;"></textarea>
+      <button>Отправить</button>
+        </form>
+        <div class="message-wrapper">
+          
+        </div>
+        
+  </div>
+ <div class="photo"><img src="img/slider/olive-oil.jpg" alt=""></div>
+  <script>
+
+    // Сделал вариант только в формате FormData, но можно отправить и в json см. word урок 53
+const form = document.querySelector('form');
+let message = {
+  loading: 'Идет Загрузка...',
+  success: 'Сообщение отправлено!',
+  failed: 'Что то пошло не так((!'
+}
+
+function postData(form) { 
+
+  form.addEventListener('submit', (e)=> { 
+    e.preventDefault(); // отключаем перезагрузку страницы
+    console.log(form);
+    const request = new XMLHttpRequest();
+    request.open('POST', 'server.php');
+    const formData = new FormData(form);
+    request.send(formData);
+
+// Создаем div для уведомлений после отправки
+let statusMessage = document.createElement('div');
+statusMessage.classList.add('message');
+statusMessage.textContent = message.loading; // показываем что идет отправка
+form.nextElementSibling.append(statusMessage); // распологаем div так, чтобы при показе и скрытии нижние блоки не прыгали
+// form.append(statusMessage); // так тоже можно
+
+     //отслеживаем загрузку 
+     request.addEventListener('load', ()=> { 
+      if(request.status == 200) { 
+        console.log(request.response); 
+//  получим ответ
+// array(3) {
+//   ["name"]=>
+//   string(10) "Антон"
+//   ["tel"]=>
+//   string(13) "+375299198261"
+//   ["message"]=>
+//   string(21) "Привет, мир!"
+// }
+// Важно! Когда мы работаем в связке XMLHTTPRequest  -FormData - нам НЕ нужны заголовки. Они установятся автоматически
+// request.setRequestHeader('Content-type', 'application/json'); // не нужен для FormData
+   // В браузере Nerwork - находим файл server.php  - Headers  и смотрим процесс передачи 16-18
+    statusMessage.textContent = message.success;
+    form.reset();
+    setTimeout(() => {
+      statusMessage.remove();
+      
+    }, 2000);
+      } else {
+        statusMessage.textContent = message.failed;
+      }
+     });
+
+   
+  });
+ 
+
+
+
+
+}
+postData(form);
+
+  </script>
+
+</body>
+
+</html>

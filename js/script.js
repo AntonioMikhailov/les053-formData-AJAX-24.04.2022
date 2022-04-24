@@ -48,7 +48,7 @@ tabsParent.addEventListener('click', (e)=> {
 // Таймер обратного отсчета времени Акции
 
 // создаем дату конца акции
-let deadLine = '2022-05-17T00:00:00+0300'; // так добавляет к текущему времени 3 часа
+let deadLine = '2022-07-17T00:00:00+0300'; // так добавляет к текущему времени 3 часа
 
 
 // Функ. которая будет определять разницу между deadline и текущим временем временем
@@ -120,7 +120,7 @@ function setClock(selector, endtime) {
 setClock('.timer', deadLine ); // deadline далее в параметрах как endtime везде
 
 
-// +++++++++++++++++++++++++++++++ модальные окна
+// ++++ Модальные окна ++++++++++++++++++++++++++++++
 const modal = document.querySelector('.modal');
 const btnOpenModal = document.querySelectorAll('[data-modal]');
 const btnCloseModal = document.querySelector('[data-close]');
@@ -134,7 +134,7 @@ function openModal() {
   document.body.style.paddingRight = offset + 'px';
   // убираем автопоказ если юзер сам кликнул и очищаем показ с задержкой и по скролу
   window.removeEventListener('scroll', showModalByScroll);
-  clearTimeout(showModalDelay);
+  // clearTimeout(showModalDelay);
 }
 
 // ф. закрытия модалки
@@ -142,7 +142,7 @@ function closeModal() {
   modal.style.display = 'none';
      document.body.style.overflow = '';
      document.body.style.paddingRight = 0 + 'px';
-     console.log(555);
+   
      }
 
 btnOpenModal.forEach(item => { 
@@ -204,11 +204,11 @@ function showModalByScroll() {
 
   window.addEventListener('scroll', showModalByScroll);
 
-console.log(document.body.scrollHeight);
-console.log(document.documentElement.scrollTop);
-console.log(window.pageYOffset);
+// console.log(document.body.scrollHeight);
+// console.log(document.documentElement.scrollTop);
+// console.log(window.pageYOffset);
 
-console.log(document.documentElement.clientHeight);
+// console.log(document.documentElement.clientHeight);
 
 // Классы для карточек урок 48
 // Что нужно для карточки - путь к фото, алт.текст для фото, заголовок, описание, цена в долларах
@@ -269,7 +269,7 @@ let div = new MenuCard( // передаем аргументы через зап
 
 );
 div.render();
-console.log(div);
+// console.log(div);
 // Создаем еще два объекта и добавляем в верстку
 // 2 вар вызова более короткий
 new MenuCard(
@@ -292,8 +292,93 @@ new MenuCard(
 'menu__item'
 ).render();
 
+// Отправка Форм обратной связи через AJAX на локальный файл server.php
+
+// Находим все формы по тегу form 3шт
+const forms = document.querySelectorAll('form');
+//кнопку в переменную не нужно т.к. form отправляет автоматом если кнликнуть по тегу button
+// создаем объект с списками фраз уведомлениями для юзера
+const message =  {
+  loading: 'Идет Загрузка', //до отправки запроса
+  success: 'Спасиоб! Скоро мы с Вами свяжемся',
+  failed: 'Что то пошло не так...'
+};
+
+//привязываем поля ввода к formData
+forms.forEach(item => { 
+  postData(item);  //вызываем функцию
+ });
+
+function postData(form) {
+  form.addEventListener('submit', (e)=> {
+    e.preventDefault();  //отменяем перезагрузку
+
+    // создаем новый блок для уведомления юзера до момента ( и в процессе) отправки
+  let statusMessage = document.createElement('div');
+  statusMessage.classList.add('status'); // добавим оформление
+  statusMessage.textContent = message.loading;
+  form.append(statusMessage); // добавили текст к форме
+
+    // Создаем метод отправки
+    const request = new XMLHttpRequest();
+    request.open('POST', 'server.php'); // метод и путь
+// настраиваем заголовки НО они  не нужны см. ниже.
+// request.setRequestHeader('Content-type', 'application/json'); // не нужен для FormData
+const formData = new FormData(form);
+
+// для перевода в JSON создаем пустой объект, перебирем formData  с циклом forEach
+const object = {};
+formData.forEach(function(value, key) { 
+  object[key] = value;
+ });
 
 
+ // создаем доп. переменную
+//  const json = JSON.stringify(object); // перевели object  в JSON и теперь нужно  его поместить в  request.send(json)
+
+    // получаем данные из полей. Можно долгое решение - через сбор value из всех input. НО быстрее через встроен. объект formData
+
+   
+//  request.send(json);
+request.send(formData);
+ //отслеживаем загрузку 
+ request.addEventListener('load', ()=> { 
+   if(request.status == 200) {
+     console.log(request.response);
+   //уведомляем юзера об успешной отправке его message
+     statusMessage.textContent = message.success;
+     // После отправки формы очищаем поля и убираем надпись уведомление
+     form.reset();
+     setTimeout(() => {
+      statusMessage.textContent = '';
+      //или statusMessage.remove();
+
+      }, 2000);
+
+   } else { // если не отправилось
+    statusMessage.textContent = message.failed;
+   }
+ 
+});
+   // Тестируем формы на сервере и получаем пока что пустые массивы. Важно! Когда мы работаем в связке XMLHTTPRequest  -FormData - нам НЕ нужны заголовки. Они установятся автоматически
+   // В браузере Nerwork - находим файл server.php  - Headers  и смотрим процесс передачи 16-18
+   //  При отправке форм получаем такие данные  console.log(request.response);
+  //  array(2) {
+  //   ["name"]=>
+  //   string(6) "цыц"
+  //   ["phone"]=>
+  //   string(4) "3434"
+  // }
+  // Увидеть эти данные можно в Network - server.php - Payload или Preview, Response
+
+  // Если в формате Json передаем то ответ  console.log(request.response);
+  // console.log(json); //{"name":"axa","phone":"3434"}
+ 
+
+
+  });
+  
+}
 
 
 

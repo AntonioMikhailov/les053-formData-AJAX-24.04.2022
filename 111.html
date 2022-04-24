@@ -7,84 +7,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>111</title>
   <style>
-    .wrapper {
-      display: flex;
-      justify-content: center;
-    }
-.text {
-   max-width: 200px;
-  max-height: 200px;
-  overflow: scroll;
-}
-.text::before {
-  content: '22';
-  font-size: 22px;
- }
+.box {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: rgb(178, 178, 178);
+margin: 0px 0px 0px 0px;
 
- .text2 {
-   opacity: 0;
-   visibility: hidden;
- }
+
+}
+.wrapper-text {
+  position: relative;
+  height:100px;
   
+}
+.text {
+  /* position: absolute; */
+ 
+}
+.box2 {
+  width: 100%;
+  height: 200px;
+  background-color: rgb(115, 115, 115);
+}
+
+
   </style>
 </head>
 
 <body>
-  <div class="wrapper">
-  <div class="text">Lorem ipsum dolor </div>
-    
+  <div class="box"></div>
+  <div class="wrapper-text">
+    <!-- Сюда надо вставить div с текстом -->
   </div>
-  <button>Кнопка</button>
-  <div class="text2"  style="line-height: 2000%;">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Asperiores, saepe deleniti vero nihil amet possimus earum aspernatur laborum, esse nam reiciendis magnam placeat praesentium maxime! Reiciendis exercitationem perspiciatis labore odit!</div>
-  <script>
-  const text = document.querySelector('.text');
-  const btn = document.querySelector('button');
-  const text2 = document.querySelector('.text2');
-  let width = text.clientWidth;
-  let height = text.clientHeight;
-// 'use strict'
-// ф.
-// function count(num) {
-//     return this*num;
-// }
-// // здесь double  - это новая ф. с жестко привязанным контекстом
-// const double = count.bind(2); //  2 перейдет в this
+ <div class="box2">BOX2</div>
 
-// console.log(double(3)); // 6
-// console.log(double(13)); // 26
+ 
+<script>
 
-// // или так можно вызвать -по настоящему
-// let res = double(6); 
-// console.log(res); // 12
+  const box = document.querySelector('.box');
+  const wrapperText = document.querySelector('.wrapper-text');
+  let newDiv = document.createElement('div');
+  newDiv.textContent = 'Привет, мир!';
+ // wrapperText.append(newDiv); // Нужно найти wrapper f это доп. строка
+  //box.nextElementSibling.append(newDiv); // если без wrapper-text
+  console.log(box.nextElementSibling); //wrapper-text
 
-btn.addEventListener('click', ()=> { // но если через стрелочную то this не сработает( выдаст window) - т.к. у стрел. нет контекста вызова, она берет его у родителя ( window - глоб. объект)
-  
- console.log(this); // <button>Кнопка</button> - то же что и event.target
- this.style.backgroundColor = 'red';
- // но на практике используют e.target  а не контекст вызова
-});
-
-let arr = [1,2,3];
-let newArr = [...arr];
-console.log(newArr);
-let obj = {
-  id: 1,
-  age: 23,
-}
-
-let newObj  = {...obj};
-console.log(newObj);
-
-let fun = function (a,b, ...rest) {
-  console.log(a, b, rest); // 1 2 (2) [3, 4] - вернет два параметра и остальные в массиве
-}
-let res = fun(1,2,3,4)
-
-function calc(a=2, b=3) {  // Но если все аргументы есть то они перепишут параметры по умолчанию
- console.log(a*b);
-}
-calc(2,5) // 10 а не 6
-  </script>
+</script>
 </body>
 
 </html>
