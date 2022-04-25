@@ -123,7 +123,7 @@ setClock('.timer', deadLine ); // deadline далее в параметрах к
 // ++++ Модальные окна ++++++++++++++++++++++++++++++
 const modal = document.querySelector('.modal');
 const btnOpenModal = document.querySelectorAll('[data-modal]');
-const btnCloseModal = document.querySelector('[data-close]');
+// const btnCloseModal = document.querySelector('[data-close]');
 
 // Суть - автопоказ по скролу и по таймеру всего один раз при загрузке страницы. Если до этого автопоказа юзер сам вызвал модалку то автопоказ убирается навсегда. И потом юзер может только вручную вызывать модалку
 //ф. открытиф модалки
@@ -179,7 +179,7 @@ btnOpenModal.forEach(item => {
    //именно document или window иначе по клавише не сработает
   document.addEventListener(item, (e)=> { 
     // делаем ссработку клавиши Esc только когда открыто окно 
-    if (e.target == btnCloseModal|| e.target == modal || (e.code == 'Escape'&& modal.style.display !== 'none')) {
+    if ( e.target == modal || (e.code == 'Escape' || e.target.getAttribute('data-close') == '' && modal.style.display !== 'none')) {
       closeModal();
     }
  });
@@ -188,7 +188,7 @@ btnOpenModal.forEach(item => {
 
   // Появление модалки при скроле до низа ( минус 300px) или после 10 секунд с начала входа на сайт
   // Для этого создадим функциии открытия модалки и закрытия
-  // let showModalDelay = setTimeout( openModal, 5000);
+  let showModalDelay = setTimeout( openModal, 50000);
 
 // ф. показа при скроле вниз
 function showModalByScroll() { 
@@ -299,8 +299,8 @@ const forms = document.querySelectorAll('form');
 //кнопку в переменную не нужно т.к. form отправляет автоматом если кнликнуть по тегу button
 // создаем объект с списками фраз уведомлениями для юзера
 const message =  {
-  loading: 'Идет Загрузка', //до отправки запроса
-  success: 'Спасиоб! Скоро мы с Вами свяжемся',
+  loading: 'img/spinner.svg', //до отправки запроса
+  success: 'Спасибо! Скоро мы с Вами свяжемся',
   failed: 'Что то пошло не так...'
 };
 
@@ -313,50 +313,50 @@ function postData(form) {
   form.addEventListener('submit', (e)=> {
     e.preventDefault();  //отменяем перезагрузку
 
-    // создаем новый блок для уведомления юзера до момента ( и в процессе) отправки
-  let statusMessage = document.createElement('div');
-  statusMessage.classList.add('status'); // добавим оформление
-  statusMessage.textContent = message.loading;
-  form.append(statusMessage); // добавили текст к форме
-
+    // создаем новый блок для spinner
+  let statusMessage = document.createElement('img');
+  statusMessage.src = message.loading;
+  statusMessage.style.cssText = ` 
+  display: block;
+  margin: 0 auto;
+  `; 
+  // но проще добавить класс в CSS
+ // form.append(statusMessage); // добавили текст к форме
+form.insertAdjacentElement('afterend', statusMessage );
     // Создаем метод отправки
     const request = new XMLHttpRequest();
     request.open('POST', 'server.php'); // метод и путь
 // настраиваем заголовки НО они  не нужны см. ниже.
 // request.setRequestHeader('Content-type', 'application/json'); // не нужен для FormData
-const formData = new FormData(form);
+const formData = new FormData(form); //получаем данные из input
 
-// для перевода в JSON создаем пустой объект, перебирем formData  с циклом forEach
+// для перевода в JSON создаем пустой объект, перебирем formData  с циклом forEach - Пример - но оставил formData
 const object = {};
 formData.forEach(function(value, key) { 
   object[key] = value;
  });
 
-
  // создаем доп. переменную
 //  const json = JSON.stringify(object); // перевели object  в JSON и теперь нужно  его поместить в  request.send(json)
 
     // получаем данные из полей. Можно долгое решение - через сбор value из всех input. НО быстрее через встроен. объект formData
-
-   
 //  request.send(json);
 request.send(formData);
- //отслеживаем загрузку 
+ //отслеживаем загрузку и ответ сервера
  request.addEventListener('load', ()=> { 
    if(request.status == 200) {
      console.log(request.response);
    //уведомляем юзера об успешной отправке его message
-     statusMessage.textContent = message.success;
+   showThanksModal(message.success);
      // После отправки формы очищаем поля и убираем надпись уведомление
      form.reset();
      setTimeout(() => {
-      statusMessage.textContent = '';
-      //или statusMessage.remove();
-
+      statusMessage.remove();
+     
       }, 2000);
 
    } else { // если не отправилось
-    statusMessage.textContent = message.failed;
+    showThanksModal(message.failed);
    }
  
 });
@@ -378,7 +378,40 @@ request.send(formData);
 
   });
   
+} // конец ф. PostData
+
+// Создаем окно благодарности после отправки формы вместо простых надписей. Будем использовать блок modal__dialog и внего вставлять новый контент
+function showThanksModal(message) { 
+  const prevModalDialog = document.querySelector('.modal__dialog');
+  // прячем предыдущий контент с полями отправки
+  prevModalDialog.classList.add('hide');
+  openModal();
+ // создаем новый контент в окне
+ let thanksModal = document.createElement('div');
+ thanksModal.classList.add('modal__dialog');
+
+thanksModal.innerHTML = `
+<div class= 'modal__content'>
+<div class='modal__close' data-close>&times;</div>
+<div class='modal-title'>${message}</div> 
+</div>  
+`;
+
+// вставляем в верстку
+document.querySelector('.modal').append(thanksModal);
+setTimeout(() => {
+  prevModalDialog.classList.remove('hide');
+  thanksModal.remove();
+
+  closeModal();
+
+}, 4000);
+
+ 
 }
+
+
+
 
 
 

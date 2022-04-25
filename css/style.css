@@ -6,6 +6,10 @@
 	font-family:Roboto,sans-serif}
 a {
 	text-decoration:none}
+
+  .hide {
+    display: none;
+  }
 .btn {
 	width:220px;
 	height:65px;
